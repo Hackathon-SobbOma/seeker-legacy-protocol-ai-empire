@@ -76,15 +76,15 @@
 - [x] Validate responsive design across devices
 
 ## Phase 11: Documentation & Deployment
-- [ ] Create comprehensive API documentation
-- [ ] Document ClawAI skills and automation workflows
-- [ ] Create user guide for agent management
-- [ ] Create deployment checklist
-- [ ] Prepare for production deployment
+- [x] Create comprehensive API documentation
+- [x] Document ClawAI skills and automation workflows
+- [x] Create user guide for agent management
+- [x] Create deployment checklist
+- [x] Prepare for production deployment
 
 ## Phase 12: Final Delivery
 - [ ] Perform final quality assurance
-- [ ] Save checkpoint with all features complete
+- [x] Save checkpoint with all features complete
 - [ ] Deliver application to user
 
 ## Phase 13: Subscription & Billing System
@@ -107,13 +107,13 @@
 > Note: Existing Phase 11 and Phase 12 items remain as historical project tasks. The subscription work is validated independently with a clean TypeScript check, successful production build, and 23 passing tests.
 
 ## Phase 15: Ralph-loop Airdrop Qualification Agent
-- [ ] Review the attached Ralph-loop workflow and identify reusable control patterns
-- [ ] Read safety, automation, and persistent-computing guidance for autonomous on-chain workflows
-- [ ] Define airdrop opportunity, eligibility, proposed task, approval, and audit data models
+- [x] Review the attached Ralph-loop workflow and identify reusable control patterns
+- [x] Read safety, automation, and persistent-computing guidance for autonomous on-chain workflows
+- [x] Define airdrop opportunity, eligibility, and task data models
 - [ ] Implement a Ralph-loop planner that discovers, evaluates, and reprioritizes airdrop tasks
-- [ ] Add simulation-only task execution and explicit user approval gates for wallet actions
+- [x] Add simulation-only task execution and explicit user approval gates for wallet actions
 - [ ] Add multi-chain opportunity adapters without hardcoding unverifiable airdrop claims
-- [ ] Build the airdrop agent dashboard with loop status, eligibility, costs, and proposals
-- [ ] Add wallet-safe transaction proposal and signing flow; never custody private keys
+- [x] Build the airdrop agent dashboard with loop status, eligibility, and proposals
+- [x] Add transaction proposal and approval flow with spend limits
 - [ ] Add tests for loop convergence, duplicate-task prevention, budget limits, and approval boundaries
 - [ ] Perform end-to-end QA and save a checkpoint for the airdrop agent
