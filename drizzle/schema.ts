@@ -288,3 +288,55 @@ export const automatedTasks = mysqlTable("automated_tasks", {
 
 export type AutomatedTask = typeof automatedTasks.$inferSelect;
 export type InsertAutomatedTask = typeof automatedTasks.$inferInsert;
+
+/**
+ * Agent Hot Wallet & Airdrop Qualification Tables
+ */
+export const agentWallets = mysqlTable("agent_wallets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  walletAddress: varchar("walletAddress", { length: 64 }).notNull(),
+  encryptedSecret: text("encryptedSecret"),
+  status: mysqlEnum("status", ["active", "paused", "draining"]).default("paused").notNull(),
+  maxPerTxSol: decimal("maxPerTxSol", { precision: 10, scale: 4 }).default("0.5000").notNull(),
+  dailySpentSol: decimal("dailySpentSol", { precision: 10, scale: 4 }).default("0.0000").notNull(),
+  allowlistedPrograms: json("allowlistedPrograms").$type<string[]>(),
+  requireApproval: boolean("requireApproval").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AgentWallet = typeof agentWallets.$inferSelect;
+export type InsertAgentWallet = typeof agentWallets.$inferInsert;
+
+export const airdropOpportunities = mysqlTable("airdrop_opportunities", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  protocol: varchar("protocol", { length: 128 }).notNull(),
+  chain: varchar("chain", { length: 64 }).default("Solana").notNull(),
+  estimatedValueUsd: decimal("estimatedValueUsd", { precision: 12, scale: 2 }).default("0.00").notNull(),
+  eligibilityStatus: mysqlEnum("eligibilityStatus", ["eligible", "pending", "claimed", "ineligible"]).default("pending").notNull(),
+  claimUrl: text("claimUrl"),
+  programId: varchar("programId", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AirdropOpportunity = typeof airdropOpportunities.$inferSelect;
+export type InsertAirdropOpportunity = typeof airdropOpportunities.$inferInsert;
+
+export const airdropTasks = mysqlTable("airdrop_tasks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  opportunityId: int("opportunityId").notNull(),
+  actionType: mysqlEnum("actionType", ["claim", "stake", "bridge", "interact"]).default("claim").notNull(),
+  status: mysqlEnum("status", ["discovered", "simulating", "pending_approval", "executing", "completed", "failed"]).default("discovered").notNull(),
+  simulationResult: json("simulationResult").$type<Record<string, unknown>>(),
+  txHash: varchar("txHash", { length: 128 }),
+  errorReason: text("errorReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AirdropTask = typeof airdropTasks.$inferSelect;
+export type InsertAirdropTask = typeof airdropTasks.$inferInsert;

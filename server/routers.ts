@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { walletRouter } from "./routers/wallet";
 import { subscriptionsRouter } from "./routers/subscriptions";
+import { airdropRouter } from "./routers/airdrop";
 
 export const appRouter = router({
   system: systemRouter,
@@ -23,6 +24,9 @@ export const appRouter = router({
 
   // Subscription, usage, and billing operations
   subscriptions: subscriptionsRouter,
+
+  // Airdrop Ralph loop and hot wallet operations
+  airdrop: airdropRouter,
 
   // TODO: add feature routers here, e.g.
   // todo: router({

@@ -1,8 +1,8 @@
 # SEEKER LEGACY PROTOCOL - Project TODO
 
 ## Phase 1: Project Setup & Database Schema
-- [ ] Rename application branding to SEEKER LEGACY PROTOCOL throughout UI
-- [ ] Update environment configuration and app title/logo
+- [x] Rename application branding to SEEKER LEGACY PROTOCOL throughout UI
+- [x] Update environment configuration and app title/logo
 - [x] Design and implement comprehensive database schema
 - [x] Create migrations for all core tables
 
@@ -105,3 +105,15 @@
 - [x] Deliver subscription system update
 
 > Note: Existing Phase 11 and Phase 12 items remain as historical project tasks. The subscription work is validated independently with a clean TypeScript check, successful production build, and 23 passing tests.
+
+## Phase 15: Ralph-loop Airdrop Qualification Agent
+- [ ] Review the attached Ralph-loop workflow and identify reusable control patterns
+- [ ] Read safety, automation, and persistent-computing guidance for autonomous on-chain workflows
+- [ ] Define airdrop opportunity, eligibility, proposed task, approval, and audit data models
+- [ ] Implement a Ralph-loop planner that discovers, evaluates, and reprioritizes airdrop tasks
+- [ ] Add simulation-only task execution and explicit user approval gates for wallet actions
+- [ ] Add multi-chain opportunity adapters without hardcoding unverifiable airdrop claims
+- [ ] Build the airdrop agent dashboard with loop status, eligibility, costs, and proposals
+- [ ] Add wallet-safe transaction proposal and signing flow; never custody private keys
+- [ ] Add tests for loop convergence, duplicate-task prevention, budget limits, and approval boundaries
+- [ ] Perform end-to-end QA and save a checkpoint for the airdrop agent
