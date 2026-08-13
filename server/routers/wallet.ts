@@ -2,10 +2,44 @@ import { router, protectedProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import { getDb } from '../db';
 import { getExecutor } from '../agents/executor';
+import {
+  checkSubscriptionLimit,
+  getTodayUsage,
+  trackUsage,
+  updateUsage,
+} from '../db.subscriptions';
 
 /**
  * Wallet and autonomous agent operations
  */
+
+async function requireAgentExecutionAccess(userId: number) {
+  const limit = await checkSubscriptionLimit(userId, 'executions');
+  if (!limit.allowed) {
+    throw new Error('An active subscription is required, or your daily automated-agent limit has been reached.');
+  }
+
+  const usage = await getTodayUsage(userId);
+  if (!usage) {
+    await trackUsage(userId, {
+      date: new Date(),
+      agentExecutions: 1,
+      apiCalls: 0,
+      transactionsProcessed: 0,
+      storageUsedMb: '0',
+    });
+  } else {
+    await updateUsage(userId, {
+      agentExecutions: (usage.agentExecutions || 0) + 1,
+    });
+  }
+
+  return {
+    current: limit.current + 1,
+    limit: limit.limit,
+    remaining: Math.max(0, limit.limit - (limit.current + 1)),
+  };
+}
 
 export const walletRouter = router({
   /**
@@ -27,6 +61,7 @@ export const walletRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const usage = await requireAgentExecutionAccess(ctx.user.id);
       const executor = await getExecutor();
 
       const executionId = await executor.queueSkillExecution({
@@ -41,6 +76,7 @@ export const walletRouter = router({
         success: true,
         executionId,
         message: `Skill execution queued: ${input.skillType}`,
+        usage,
       };
     }),
 
@@ -101,6 +137,7 @@ export const walletRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const usage = await requireAgentExecutionAccess(ctx.user.id);
       // In a real implementation, this would:
       // 1. Validate the recipient address
       // 2. Check wallet balance
@@ -120,6 +157,7 @@ export const walletRouter = router({
         amount: input.amount,
         status: 'pending',
         message: 'Transaction queued for execution',
+        usage,
       };
     }),
 
@@ -136,6 +174,7 @@ export const walletRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const usage = await requireAgentExecutionAccess(ctx.user.id);
       // Queue token distribution skill
       const executor = await getExecutor();
 
@@ -159,6 +198,7 @@ export const walletRouter = router({
         tokenMint: input.tokenMint,
         status: 'queued',
         message: 'Token transfer queued',
+        usage,
       };
     }),
 
@@ -229,6 +269,7 @@ export const walletRouter = router({
   startAutonomousAgent: protectedProcedure
     .input(z.object({ agentId: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      const usage = await requireAgentExecutionAccess(ctx.user.id);
       const executor = await getExecutor();
 
       const executionId = await executor.queueSkillExecution({
@@ -248,6 +289,7 @@ export const walletRouter = router({
         executionId,
         status: 'starting',
         message: 'Agent startup queued',
+        usage,
       };
     }),
 
@@ -257,6 +299,7 @@ export const walletRouter = router({
   stopAutonomousAgent: protectedProcedure
     .input(z.object({ agentId: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      const usage = await requireAgentExecutionAccess(ctx.user.id);
       const executor = await getExecutor();
 
       const executionId = await executor.queueSkillExecution({
@@ -276,6 +319,7 @@ export const walletRouter = router({
         executionId,
         status: 'stopping',
         message: 'Agent stop queued',
+        usage,
       };
     }),
 
@@ -285,6 +329,7 @@ export const walletRouter = router({
   calculateRevenue: protectedProcedure
     .input(z.object({ period: z.enum(['daily', 'weekly', 'monthly']), agentId: z.number().optional() }))
     .mutation(async ({ ctx, input }) => {
+      const usage = await requireAgentExecutionAccess(ctx.user.id);
       const executor = await getExecutor();
 
       const executionId = await executor.queueSkillExecution({
@@ -303,6 +348,7 @@ export const walletRouter = router({
         period: input.period,
         status: 'calculating',
         message: 'Revenue calculation queued',
+        usage,
       };
     }),
 

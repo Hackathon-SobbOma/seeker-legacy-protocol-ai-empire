@@ -80,6 +80,13 @@ export default function Home() {
                 Dashboard
               </Button>
               <Button
+                onClick={() => navigate("/pricing")}
+                variant="outline"
+                size="lg"
+              >
+                Agent plans
+              </Button>
+              <Button
                 onClick={() => logout()}
                 variant="ghost"
                 size="lg"
@@ -88,6 +95,14 @@ export default function Home() {
               </Button>
             </>
           ) : (
+            <>
+            <Button
+              onClick={() => navigate("/pricing")}
+              variant="outline"
+              size="lg"
+            >
+              View agent plans
+            </Button>
             <Button
               onClick={() => (window.location.href = getLoginUrl())}
               className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600"
@@ -96,6 +111,7 @@ export default function Home() {
               <Zap className="w-5 h-5" />
               Login to Get Started
             </Button>
+            </>
           )}
         </div>
 

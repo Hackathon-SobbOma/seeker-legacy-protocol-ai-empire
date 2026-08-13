@@ -8,6 +8,8 @@ import { WalletProvider } from "./components/WalletProvider";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import WalletConnection from "./pages/WalletConnection";
+import Pricing from "./pages/Pricing";
+import Billing from "./pages/Billing";
 
 function Router() {
   return (
@@ -15,6 +17,8 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/wallet"} component={WalletConnection} />
+      <Route path={"/pricing"} component={Pricing} />
+      <Route path={"/billing"} component={Billing} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

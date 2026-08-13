@@ -151,6 +151,98 @@ export type RevenueTracking = typeof revenueTracking.$inferSelect;
 export type InsertRevenueTracking = typeof revenueTracking.$inferInsert;
 
 /**
+ * Subscription plans table - defines available subscription tiers
+ */
+export const subscriptionPlans = mysqlTable("subscription_plans", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  tier: mysqlEnum("tier", ["free", "starter", "professional", "enterprise"]).notNull(),
+  monthlyPrice: decimal("monthlyPrice", { precision: 10, scale: 2 }).notNull(),
+  yearlyPrice: decimal("yearlyPrice", { precision: 10, scale: 2 }),
+  maxAgents: int("maxAgents").notNull(),
+  maxExecutionsPerDay: int("maxExecutionsPerDay").notNull(),
+  features: json("features").$type<string[]>(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+export type InsertSubscriptionPlan = typeof subscriptionPlans.$inferInsert;
+
+/**
+ * User subscriptions table - tracks active subscriptions for each user
+ */
+export const userSubscriptions = mysqlTable("user_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  planId: int("planId").notNull(),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  status: mysqlEnum("status", ["active", "paused", "cancelled", "past_due", "trialing"]).default("active").notNull(),
+  billingCycle: mysqlEnum("billingCycle", ["monthly", "yearly"]).default("monthly").notNull(),
+  currentPeriodStart: timestamp("currentPeriodStart").notNull(),
+  currentPeriodEnd: timestamp("currentPeriodEnd").notNull(),
+  cancelledAt: timestamp("cancelledAt"),
+  trialEndDate: timestamp("trialEndDate"),
+  autoRenew: boolean("autoRenew").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = typeof userSubscriptions.$inferInsert;
+
+/**
+ * Usage tracking table - monitors API calls and agent executions
+ */
+export const usageTracking = mysqlTable("usage_tracking", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  date: timestamp("date").notNull(),
+  agentExecutions: int("agentExecutions").default(0).notNull(),
+  apiCalls: int("apiCalls").default(0).notNull(),
+  transactionsProcessed: int("transactionsProcessed").default(0).notNull(),
+  storageUsedMb: decimal("storageUsedMb", { precision: 10, scale: 2 }).default("0").notNull(),
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UsageTracking = typeof usageTracking.$inferSelect;
+export type InsertUsageTracking = typeof usageTracking.$inferInsert;
+
+/**
+ * Billing records table - invoices and payment history
+ */
+export const billingRecords = mysqlTable("billing_records", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  subscriptionId: int("subscriptionId").notNull(),
+  invoiceNumber: varchar("invoiceNumber", { length: 100 }).notNull().unique(),
+  stripeInvoiceId: varchar("stripeInvoiceId", { length: 255 }),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  status: mysqlEnum("status", ["draft", "open", "paid", "void", "uncollectible"]).default("open").notNull(),
+  billingPeriodStart: timestamp("billingPeriodStart").notNull(),
+  billingPeriodEnd: timestamp("billingPeriodEnd").notNull(),
+  dueDate: timestamp("dueDate"),
+  paidDate: timestamp("paidDate"),
+  description: text("description"),
+  lineItems: json("lineItems").$type<Array<{
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    amount: number;
+  }>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BillingRecord = typeof billingRecords.$inferSelect;
+export type InsertBillingRecord = typeof billingRecords.$inferInsert;
+
+/**
  * ClawAI skills execution log - tracks automation task execution
  */
 export const clawaiSkillsLog = mysqlTable("clawai_skills_log", {

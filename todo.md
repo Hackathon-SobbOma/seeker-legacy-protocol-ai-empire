@@ -86,3 +86,22 @@
 - [ ] Perform final quality assurance
 - [ ] Save checkpoint with all features complete
 - [ ] Deliver application to user
+
+## Phase 13: Subscription & Billing System
+- [x] Design tiered subscription pricing model
+- [x] Extend database schema for subscriptions and billing
+- [x] Implement Stripe payment integration
+- [x] Create subscription management tRPC routers
+- [x] Build subscription UI and pricing page
+- [x] Implement usage tracking and metering
+- [x] Create billing dashboard and invoice management
+- [x] Add subscription enforcement to agent operations
+- [x] Test subscription system end-to-end
+- [x] Save checkpoint with subscription system complete
+
+## Phase 14: Remaining QA and Delivery
+- [x] Perform final quality assurance
+- [x] Save checkpoint with subscription system complete
+- [x] Deliver subscription system update
+
+> Note: Existing Phase 11 and Phase 12 items remain as historical project tasks. The subscription work is validated independently with a clean TypeScript check, successful production build, and 23 passing tests.

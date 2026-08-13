@@ -41,7 +41,12 @@ export function AutonomousAgentDashboard() {
     if (queue) {
       setQueueStatus(queue);
       if (queue.queue) {
-        setExecutions(queue.queue);
+        setExecutions(
+          queue.queue.map((execution) => ({
+            ...execution,
+            status: (execution as { status?: ExecutionStatus["status"] }).status ?? "pending",
+          }))
+        );
       }
     }
   }, [queue]);
