@@ -1,0 +1,19 @@
+name = "ai-empire"
+main = "src/worker.ts"
+compatibility_date = "2026-10-07"
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[durable_objects]
+bindings = [
+  { name = "EMPIRE_STATE", class_name = "EmpireState" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["EmpireState"]
+
+[vars]
+ENVIRONMENT = "production"
+# Set secrets with: wrangler secret put LLM_API_URL / LLM_API_KEY / LLM_MODEL
