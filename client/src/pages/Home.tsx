@@ -87,6 +87,13 @@ export default function Home() {
                 Agent plans
               </Button>
               <Button
+                onClick={() => navigate("/empire")}
+                variant="outline"
+                size="lg"
+              >
+                Empire Control Center
+              </Button>
+              <Button
                 onClick={() => logout()}
                 variant="ghost"
                 size="lg"

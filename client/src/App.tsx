@@ -11,6 +11,7 @@ import WalletConnection from "./pages/WalletConnection";
 import Pricing from "./pages/Pricing";
 import Billing from "./pages/Billing";
 import AirdropAgent from "./pages/AirdropAgent";
+import EmpireControl from "./pages/EmpireControl";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/billing"} component={Billing} />
       <Route path={"/airdrop-agent"} component={AirdropAgent} />
+      <Route path={"/empire"} component={EmpireControl} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
