@@ -21,4 +21,19 @@ describe("bounded Empire orchestrator", () => {
     expect(Math.max(...run.agents.map((agent) => agent.generation))).toBeLessThanOrEqual(1);
     expect(run.agents.every((agent) => agent.result?.simulation === true || agent.role === "master")).toBe(true);
   });
+
+  it("recursively spawns research and coder children under their own parents", () => {
+    const run = runEmpire("Build a code platform with research", {
+      maxGenerationDepth: 2,
+      maxTotalAgents: 12,
+      maxConcurrentAgents: 4,
+    });
+    for (const role of ["researcher", "coder"] as const) {
+      const parent = run.agents.find((agent) => agent.role === role && agent.generation === 1);
+      expect(parent).toBeDefined();
+      const child = run.agents.find((agent) => agent.role === role && agent.generation === 2 && agent.parentId === parent?.agentId);
+      expect(child?.result?.simulation).toBe(true);
+    }
+    expect(Math.max(...run.agents.map((agent) => agent.generation))).toBe(2);
+  });
 });

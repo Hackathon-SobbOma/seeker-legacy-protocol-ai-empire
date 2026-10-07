@@ -107,6 +107,30 @@ export function runEmpire(goal: string, requestedLimits?: Partial<EmpireLimits>)
     return agent;
   };
 
+  const completeAgent = (agent: EmpireAgent) => {
+    agent.status = "completed";
+    agent.result = {
+      testsPassed: true,
+      confidence: agent.generation > 1 ? 0.76 : 0.82,
+      lessons: [`${agent.role} generation ${agent.generation} output recorded in shared memory; no model retraining claimed.`],
+      recommendedNextAction: agent.role === "security" ? "Keep signing and external side effects approval-gated." : "Pass structured result to master.",
+      simulation: true,
+    };
+    memory.push({ type: "lesson", content: `${agent.role} generation ${agent.generation} completed in simulation mode.` });
+  };
+
+  const spawnRecursiveChildren = (parent: EmpireAgent) => {
+    if (parent.generation >= plan.limits.maxGenerationDepth) return;
+    if (parent.role !== "researcher" && parent.role !== "coder") return;
+    if (agents.filter((agent) => agent.status === "running").length >= plan.limits.maxConcurrentAgents) {
+      memory.push({ type: "decision", content: "Concurrency guard reached; recursive workers are evaluated in bounded batches." });
+      agents.filter((agent) => agent.status === "running").forEach((agent) => (agent.status = "completed"));
+    }
+    const child = addAgent(parent.role, parent.agentId, parent.generation + 1, `Recursively deepen the ${parent.role} capability for: ${goal}`);
+    if (!child) return;
+    completeAgent(child);
+  };
+
   const master = addAgent("master", null, 0, "Coordinate a bounded team for the requested goal.");
   if (!master) throw new Error("Unable to create master agent within configured limits");
 
@@ -119,15 +143,8 @@ export function runEmpire(goal: string, requestedLimits?: Partial<EmpireLimits>)
     }
     const worker = addAgent(role, master.agentId, 1, `Provide the ${role} capability for: ${goal}`);
     if (!worker) continue;
-    worker.status = "completed";
-    worker.result = {
-      testsPassed: true,
-      confidence: 0.82,
-      lessons: [`${role} output recorded in shared memory; no model retraining claimed.`],
-      recommendedNextAction: role === "security" ? "Keep signing and external side effects approval-gated." : "Pass structured result to master.",
-      simulation: true,
-    };
-    memory.push({ type: "lesson", content: `${role} completed in simulation mode.` });
+    completeAgent(worker);
+    spawnRecursiveChildren(worker);
   }
 
   master.status = "completed";
