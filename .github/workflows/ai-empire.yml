@@ -20,6 +20,6 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --dir ai-empire install --no-frozen-lockfile
+      - run: pnpm --dir ai-empire install --frozen-lockfile
       - run: pnpm --dir ai-empire test
       - run: pnpm --dir ai-empire demo

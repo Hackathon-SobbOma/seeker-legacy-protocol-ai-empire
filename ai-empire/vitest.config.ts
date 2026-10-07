@@ -1,2 +1,9 @@
 import { defineConfig } from "vitest/config";
-export default defineConfig({ test: { environment: "node", include: ["ai-empire/test/**/*.test.ts"] } });
+
+export default defineConfig({
+  root: import.meta.dirname,
+  test: {
+    environment: "node",
+    include: ["test/**/*.test.ts"],
+  },
+});
