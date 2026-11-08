@@ -11,6 +11,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "demo:ai-empire": "node scripts/demo-ai-empire.mjs",
+    "demo:omega": "tsx seekermoneygene/src/index.ts",
+    "test:omega": "vitest --config seekermoneygene/vitest.config.ts run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate"
   },
   "dependencies": {
