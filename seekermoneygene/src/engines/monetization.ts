@@ -1,13 +1,19 @@
 import type { OfferDraft } from "../types.js";
 import { validateOffer } from "../core/ethics.js";
 
+export interface DraftOfferResult {
+  offer: OfferDraft;
+  ok: boolean;
+  reasons: string[];
+}
+
 export function draftOffer(input: {
   name: string;
   priceUsd: number;
   recurring: boolean;
   valueProposition: string;
   claims: string[];
-}): { offer: OfferDraft; ok: boolean; reasons: string[] } {
+}): DraftOfferResult {
   const offer: OfferDraft = { ...input, marginTarget: 0.9 };
   const verdict = validateOffer(offer);
   return { offer, ok: verdict.ok, reasons: verdict.reasons };

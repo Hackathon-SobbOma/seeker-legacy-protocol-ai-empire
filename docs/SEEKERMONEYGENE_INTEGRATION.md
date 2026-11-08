@@ -6,6 +6,7 @@
 
 - `seekermoneygene/src/core/` contains the ethical role cycle, in-process memory, and Omega coordinator.
 - `seekermoneygene/src/engines/` contains content-pack and monetization-draft engines.
+- `seekermoneygene/src/automation.ts` contains the approval-gated social/content/offer/analytics automation plan.
 - `ai-empire/` contains the standalone bounded Cloudflare Worker orchestration package.
 - `server/agents/` and `server/routers/` contain the existing Web3 application services.
 - `client/` contains the SEEKER LEGACY PROTOCOL web interface.
@@ -17,6 +18,8 @@ From the repository root:
 ```bash
 pnpm demo:omega
 pnpm test:omega
+pnpm demo:automation
+pnpm test:automation
 pnpm demo:ai-empire
 pnpm test
 ```
