@@ -8,7 +8,8 @@ import {
   decimal,
   json,
   boolean,
-  bigint
+  bigint,
+  uniqueIndex
 } from "drizzle-orm/mysql-core";
 
 /**
@@ -340,3 +341,28 @@ export const airdropTasks = mysqlTable("airdrop_tasks", {
 
 export type AirdropTask = typeof airdropTasks.$inferSelect;
 export type InsertAirdropTask = typeof airdropTasks.$inferInsert;
+
+/**
+ * Server-side social OAuth connections. Token material is encrypted before it
+ * reaches this table and is never selected by status/list procedures.
+ */
+export const socialConnections = mysqlTable("social_connections", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  provider: mysqlEnum("provider", ["x", "linkedin"]).notNull(),
+  providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
+  displayName: varchar("displayName", { length: 255 }),
+  encryptedAccessToken: text("encryptedAccessToken"),
+  encryptedRefreshToken: text("encryptedRefreshToken"),
+  tokenExpiresAt: timestamp("tokenExpiresAt"),
+  scopes: text("scopes"),
+  status: mysqlEnum("status", ["active", "revoked"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userProviderUnique: uniqueIndex("social_connections_user_provider_unique")
+    .on(table.userId, table.provider),
+}));
+
+export type SocialConnection = typeof socialConnections.$inferSelect;
+export type InsertSocialConnection = typeof socialConnections.$inferInsert;

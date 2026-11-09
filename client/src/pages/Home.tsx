@@ -94,6 +94,13 @@ export default function Home() {
                 Empire Control Center
               </Button>
               <Button
+                onClick={() => navigate("/social-connections")}
+                variant="outline"
+                size="lg"
+              >
+                Social connections
+              </Button>
+              <Button
                 onClick={() => logout()}
                 variant="ghost"
                 size="lg"

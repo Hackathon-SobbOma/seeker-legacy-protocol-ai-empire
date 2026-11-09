@@ -14,7 +14,8 @@ import {
   BlockchainTransaction,
   RevenueTracking,
   ClawaiSkillsLog,
-  AutomatedTask
+  AutomatedTask,
+  socialConnections
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -381,4 +382,92 @@ export async function updateAutomatedTask(id: number, updates: Partial<typeof au
   if (!db) throw new Error("Database not available");
   
   return await db.update(automatedTasks).set(updates).where(eq(automatedTasks.id, id));
+}
+
+// ============= SOCIAL OAUTH CONNECTION OPERATIONS =============
+
+export type SocialProvider = "x" | "linkedin";
+
+export async function upsertSocialConnection(input: {
+  userId: number;
+  provider: SocialProvider;
+  providerAccountId: string;
+  displayName?: string | null;
+  encryptedAccessToken: string;
+  encryptedRefreshToken?: string | null;
+  tokenExpiresAt?: Date | null;
+  scopes?: string | null;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db.select({ id: socialConnections.id })
+    .from(socialConnections)
+    .where(and(
+      eq(socialConnections.userId, input.userId),
+      eq(socialConnections.provider, input.provider),
+    ))
+    .limit(1);
+
+  if (existing[0]) {
+    await db.update(socialConnections)
+      .set({
+        providerAccountId: input.providerAccountId,
+        displayName: input.displayName ?? null,
+        encryptedAccessToken: input.encryptedAccessToken,
+        encryptedRefreshToken: input.encryptedRefreshToken ?? null,
+        tokenExpiresAt: input.tokenExpiresAt ?? null,
+        scopes: input.scopes ?? null,
+        status: "active",
+      })
+      .where(eq(socialConnections.id, existing[0].id));
+    return existing[0].id;
+  }
+
+  const result = await db.insert(socialConnections).values({
+    userId: input.userId,
+    provider: input.provider,
+    providerAccountId: input.providerAccountId,
+    displayName: input.displayName ?? null,
+    encryptedAccessToken: input.encryptedAccessToken,
+    encryptedRefreshToken: input.encryptedRefreshToken ?? null,
+    tokenExpiresAt: input.tokenExpiresAt ?? null,
+    scopes: input.scopes ?? null,
+    status: "active",
+  });
+  return result[0].insertId;
+}
+
+export async function getSocialConnectionsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select({
+    id: socialConnections.id,
+    provider: socialConnections.provider,
+    providerAccountId: socialConnections.providerAccountId,
+    displayName: socialConnections.displayName,
+    tokenExpiresAt: socialConnections.tokenExpiresAt,
+    scopes: socialConnections.scopes,
+    status: socialConnections.status,
+    createdAt: socialConnections.createdAt,
+    updatedAt: socialConnections.updatedAt,
+  }).from(socialConnections)
+    .where(eq(socialConnections.userId, userId))
+    .orderBy(desc(socialConnections.updatedAt))
+    .limit(20);
+}
+
+export async function revokeSocialConnection(userId: number, provider: SocialProvider) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return db.update(socialConnections).set({
+    status: "revoked",
+    encryptedAccessToken: null,
+    encryptedRefreshToken: null,
+  }).where(and(
+    eq(socialConnections.userId, userId),
+    eq(socialConnections.provider, provider),
+  ));
 }

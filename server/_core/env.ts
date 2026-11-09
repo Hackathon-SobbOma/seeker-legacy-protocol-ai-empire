@@ -7,4 +7,12 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  socialOAuthStateSecret: process.env.SOCIAL_OAUTH_STATE_SECRET ?? process.env.JWT_SECRET ?? "",
+  socialTokenEncryptionKey: process.env.SOCIAL_TOKEN_ENCRYPTION_KEY ?? "",
+  xClientId: process.env.X_CLIENT_ID ?? "",
+  xClientSecret: process.env.X_CLIENT_SECRET ?? "",
+  xRedirectUri: process.env.X_REDIRECT_URI ?? "",
+  linkedinClientId: process.env.LINKEDIN_CLIENT_ID ?? "",
+  linkedinClientSecret: process.env.LINKEDIN_CLIENT_SECRET ?? "",
+  linkedinRedirectUri: process.env.LINKEDIN_REDIRECT_URI ?? "",
 };

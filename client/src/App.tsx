@@ -12,6 +12,7 @@ import Pricing from "./pages/Pricing";
 import Billing from "./pages/Billing";
 import AirdropAgent from "./pages/AirdropAgent";
 import EmpireControl from "./pages/EmpireControl";
+import SocialConnections from "./pages/SocialConnections";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path={"/billing"} component={Billing} />
       <Route path={"/airdrop-agent"} component={AirdropAgent} />
       <Route path={"/empire"} component={EmpireControl} />
+      <Route path={"/social-connections"} component={SocialConnections} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
